@@ -14,7 +14,7 @@ Application for updating your Discord activity with metadata from opened documen
 8. (Optional) open a document in Zathura
 8. Your Discord rich presence should now be updated
 
-By default the hover presence hover data shows a generic message:
+By default the presence's hover data shows a generic message:
 
 ![250507231139](https://github.com/user-attachments/assets/5f349000-ddf1-4bfa-8050-926a3cbe9b65)
 
