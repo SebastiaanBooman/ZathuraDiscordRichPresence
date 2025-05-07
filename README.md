@@ -9,7 +9,7 @@ Application for updating your Discord activity with metadata from opened documen
 1. Ensure Zathura is installed and working
 2. Download the source code
 3. Ensure Golang version >= 1.24.3 is installed
-6. Building the source code with `go build` and run the executable (e.g: `./main` after building on Linux)
+6. Building the source code with `go build` and run the executable (e.g: `./ZathuraDiscordRichPresence` after building on Linux)
 7. Start Zathura (documents openend in Zathura with sandbox mode are NOT detected by this application)
 8. (Optional) open a document in Zathura
 8. Your Discord rich presence should now be updated
@@ -19,8 +19,8 @@ By default the hover presence hover data shows a generic message:
 ![250507231139](https://github.com/user-attachments/assets/5f349000-ddf1-4bfa-8050-926a3cbe9b65)
 
 This message can optionally be changed to show the current chapter that is being read, by running the application with the `-show-chapters` flag
-- `./main.go -show-chapters`:
-- 
+- `./ZathuraDiscordRichPresence`.go -show-chapters`:
+
 ![250507231114](https://github.com/user-attachments/assets/a6fe91ef-5b37-424b-944a-35e8ab254d02)
 
 HOWEVER, be weary that this data could include sensitive information depending on which document you open (which is why it is turned off by default.
