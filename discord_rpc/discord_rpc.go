@@ -1,7 +1,6 @@
 package discordrpc
 
 import (
-	//"fmt"
 	"github.com/hugolgst/rich-go/client"
 	"time"
 )
