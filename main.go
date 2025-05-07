@@ -141,6 +141,22 @@ func getChapterNameBasedOnPageNumber(documentInfo DocumentInfo, pageNumber int) 
 	return indexName, nil
 }
 
+// Determines which icon to use based on file extension
+// TODO: Add more icons (?)
+func getDocumentIcon(fileNameWithExtension string) string {
+	extensionSplit := strings.Split(fileNameWithExtension, ".")
+	extension := extensionSplit[len(extensionSplit)-1]
+
+	switch {
+	case strings.EqualFold(extension, "pdf"):
+		return "pdf-icon"
+	case strings.EqualFold(extension, "epub"):
+		return "epub-icon"
+	default:
+		return "blank-icon"
+	}
+}
+
 func main() {
 	shouldShowChapters := flag.Bool("show-chapters", false, "Whether to show document chapter information in the rich presence")
 	flag.Parse()
@@ -205,6 +221,9 @@ func main() {
 				timeStartedReading = time.Now()
 				lastOpenedFileName = fileName
 			}
+
+			documentIcon := getDocumentIcon(fileNameWithoutPath)
+
 			if *shouldShowChapters {
 
 				deserializedDocumentInfo, err := deserializeDocumentInfo(documentInfo)
@@ -220,7 +239,7 @@ func main() {
 				largeText = "Chapter: " + chapterName
 			}
 
-			err = discordrpc.SetActivity("Page: "+strconv.Itoa(pageNumber)+"/"+strconv.Itoa(numberOfPages), fileNameWithoutPath, "blank-icon", largeText, timeStartedReading)
+			err = discordrpc.SetActivity("Page: "+strconv.Itoa(pageNumber)+"/"+strconv.Itoa(numberOfPages), fileNameWithoutPath, documentIcon, largeText, timeStartedReading)
 
 			if err != nil {
 				logging.ErrorWithContext("Error during discordrpc.SetActiviy", err)
