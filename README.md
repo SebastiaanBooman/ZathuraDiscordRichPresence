@@ -19,7 +19,7 @@ By default the hover presence hover data shows a generic message:
 ![250507231139](https://github.com/user-attachments/assets/5f349000-ddf1-4bfa-8050-926a3cbe9b65)
 
 This message can optionally be changed to show the current chapter that is being read, by running the application with the `-show-chapters` flag
-- `./ZathuraDiscordRichPresence`.go -show-chapters`:
+- `./ZathuraDiscordRichPresence -show-chapters`:
 
 ![250507231114](https://github.com/user-attachments/assets/a6fe91ef-5b37-424b-944a-35e8ab254d02)
 
