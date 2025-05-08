@@ -195,7 +195,7 @@ func main() {
 		if !isDiscordRpcConnected {
 			err := discordrpc.Login()
 			if err != nil {
-				fmt.Println("Error:", err)
+				logging.ErrorWithContext("Error during discordrpc.Login", err)
 				continue
 			}
 			isDiscordRpcConnected = true
