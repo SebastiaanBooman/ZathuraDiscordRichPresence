@@ -121,7 +121,7 @@ func getChapterNameBasedOnPageNumber(documentInfo DocumentInfo, pageNumber int) 
 	documentIndex := *documentInfo.Index
 
 	if documentIndex == nil {
-		logging.Error("No index found on documentInfo with Filename: " + documentInfo.Filename)
+		logging.Warn("No index found on documentInfo with Filename: " + documentInfo.Filename)
 		return "", errors.New("No index found on documentInfo with Filename: " + documentInfo.Filename)
 	}
 
@@ -137,7 +137,7 @@ func getChapterNameBasedOnPageNumber(documentInfo DocumentInfo, pageNumber int) 
 	}
 
 	if indexName == "" {
-		logging.Error("No index found on documentInfo with Filename (indexName == \"\"): " + documentInfo.Filename)
+		logging.Warn("No index found on documentInfo with Filename (indexName == \"\"): " + documentInfo.Filename)
 		return "", errors.New("No index found on documentInfo with Filename (indexName == \"\"): " + documentInfo.Filename)
 	}
 
@@ -240,10 +240,9 @@ func main() {
 				}
 				chapterName, err := getChapterNameBasedOnPageNumber(deserializedDocumentInfo, pageNumber)
 
-				if err != nil {
-					continue
+				if err == nil {
+					largeText = "Chapter: " + chapterName
 				}
-				largeText = "Chapter: " + chapterName
 			}
 
 			err = discordrpc.SetActivity("Page: "+strconv.Itoa(pageNumber)+"/"+strconv.Itoa(numberOfPages), fileNameWithoutPath, documentIcon, largeText, timeStartedReading)
