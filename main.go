@@ -99,6 +99,9 @@ func getZathuraDocumentInfo(
 		return "", 0, 0, "", err
 	}
 
+	//NOTE: pagenumber is 0-based
+	pageNumberPropertyValue += 1
+
 	return fileNamePropertyValue, pageNumberPropertyValue, numberOfPagesPropertyValue, documentInfoPagesPropertyValue, nil
 }
 
