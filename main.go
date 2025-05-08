@@ -185,6 +185,10 @@ func main() {
 	for {
 		isZathuraProcessRunning, zathuraProcessId, err := getZathuraProcessId()
 		if err != nil {
+			if isDiscordRpcConnected {
+				discordrpc.Logout()
+				isDiscordRpcConnected = false
+			}
 			continue
 		}
 
