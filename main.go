@@ -9,8 +9,6 @@ import (
 	"encoding/json"
 	"errors"
 	"flag"
-	"fmt"
-	"os"
 	"os/exec"
 	"path/filepath"
 	"strconv"
@@ -31,7 +29,9 @@ type Index struct {
 }
 
 func getZathuraProcessId() (isZathuraProcessRunning bool, firstZathuraProcessId string, error error) {
-	cmd := exec.Command("pgrep", "zathura")
+	const processNameToSearch = "zathura"
+
+	cmd := exec.Command("pgrep", "--list-name", processNameToSearch)
 
 	output, err := cmd.Output()
 	if err != nil {
@@ -39,17 +39,32 @@ func getZathuraProcessId() (isZathuraProcessRunning bool, firstZathuraProcessId 
 		return false, "", err
 	}
 
-	zathura_process_ids := strings.Split(strings.TrimSpace(string(output)), "\n")
+	zathura_process_id_names := strings.Split(strings.TrimSpace(string(output)), "\n")
 
-	if len(zathura_process_ids) == 0 {
+	if len(zathura_process_id_names) == 0 {
 		logging.ErrorWithContext("Can not get Zathura process id due to error: ", err)
 		return false, "", nil
 	}
-	if len(zathura_process_ids) > 1 {
-		logging.WarnWithContext("Multiple Zathura processes found. Using the first one: ", zathura_process_ids)
+
+	if len(zathura_process_id_names) > 1 {
+		logging.WarnWithContext("Multiple processes found containing \""+processNameToSearch+"\" in their name. Attempting to use the first one which matches \"zathura\" exactly", zathura_process_id_names)
 	}
 
-	return true, zathura_process_ids[0], nil
+	for _, process_id_name := range zathura_process_id_names {
+		split_process_id_name := strings.Split(string(process_id_name), " ")
+		if len(split_process_id_name) != 2 {
+			logging.ErrorWithContext("Length of split_process_id_name was not 2. Actual length:", len(split_process_id_name))
+			continue
+		}
+
+		if split_process_id_name[1] == "zathura" {
+			return true, split_process_id_name[0], nil
+		}
+	}
+
+	logging.LogInfo("No processes found containing exact name: \"" + processNameToSearch + "\"")
+
+	return false, "", nil
 }
 
 func getZathuraDocumentInfo(
@@ -170,19 +185,24 @@ func main() {
 	}
 	defer logFile.Close()
 
+	var isDbusConnected bool = false
 	var isDiscordRpcConnected bool = false
 	var timeStartedReading time.Time
 	var lastOpenedFileName string
+	var dbusConnection *dbus.Conn
 
-	dbusConnection, err := dbus.ConnectSessionBus()
-	if err != nil {
-		logging.Error("Failed to connect to session bus: " + err.Error())
-		os.Exit(1)
-
-	}
-	defer dbusConnection.Close()
+	logging.LogInfo("Application started! Starting main loop... ")
 
 	for {
+		if !isDbusConnected {
+			dbusConnection, err = dbus.ConnectSessionBus()
+			if err != nil {
+				logging.Error("Failed to connect to session bus: " + err.Error())
+				continue
+			}
+		}
+		defer dbusConnection.Close()
+
 		isZathuraProcessRunning, zathuraProcessId, err := getZathuraProcessId()
 		if err != nil || !isZathuraProcessRunning {
 			if isDiscordRpcConnected {
