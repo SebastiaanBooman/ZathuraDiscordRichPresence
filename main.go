@@ -185,7 +185,6 @@ func main() {
 	}
 	defer logFile.Close()
 
-	var isDbusConnected bool = false
 	var isDiscordRpcConnected bool = false
 	var timeStartedReading time.Time
 	var lastOpenedFileName string
@@ -194,14 +193,15 @@ func main() {
 	logging.LogInfo("Application started! Starting main loop... ")
 
 	for {
-		if !isDbusConnected {
+		if dbusConnection == nil || !dbusConnection.Connected() {
 			dbusConnection, err = dbus.ConnectSessionBus()
+
 			if err != nil {
 				logging.Error("Failed to connect to session bus: " + err.Error())
+				time.Sleep(5 * time.Second)
 				continue
 			}
 		}
-		defer dbusConnection.Close()
 
 		isZathuraProcessRunning, zathuraProcessId, err := getZathuraProcessId()
 		if err != nil || !isZathuraProcessRunning {
